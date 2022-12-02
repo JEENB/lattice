@@ -1,5 +1,8 @@
 import math
 import random
+from decompose import Decompose
+import numpy as np
+import numpy.linalg as linalg
 
 '''
 Discrete Gaussian sampling as per 
@@ -45,3 +48,5 @@ class DiscreteGaussian:
 d = DiscreteGaussian(m = 10,t =  0, sigma=5, tao=1)
 l = d.sample(10)
 # print(l.count(range(10)))
+
+
