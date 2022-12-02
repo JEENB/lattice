@@ -42,7 +42,9 @@ class Decompose:
 		y = c. B  #paper suggests B*t but since bi's are already row vectors transpose is not requuired
 		return (y_i/r_i^2)
 		'''
-		y = np.matmul(self.c, self.B)
+		self.y = np.matmul(self.c, self.B)
+		return np.true_divide(self.y,self.ri)
+
 		
 
 		
