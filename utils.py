@@ -1,5 +1,6 @@
 ''' linear algebra utils'''
 import numpy.linalg as linalg
+import numpy as np
 
 def dot(vec1:list, vec2:list) -> int:
 	'''
