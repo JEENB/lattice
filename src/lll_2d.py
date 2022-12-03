@@ -1,7 +1,7 @@
 '''
 2 Dimension lattice reduction. Implemented as per the algorithm described in Proposition 6.63 from Introduction to Mathematical Cryptography. 
 '''
-from utils import *
+from src.utils import *
 import numpy as np
 import numpy.linalg as linalg
 from tabulate import tabulate
@@ -43,7 +43,7 @@ class GramSchmidt(Basis):
 		inter_result.append((self.v_0, v_1))
 	
 		if steps == True:
-			print(tabulate(inter_result, headers= ['v_1', 'v_2'], tablefmt="pretty", numalign='center') )
+			print(tabulate(inter_result, headers= ['v_1^*', 'v_2^*'], tablefmt="pretty", numalign='center') )
 					
 		return self.v_0, v_1
 

@@ -1,6 +1,5 @@
 import math
 import random
-from decompose import Decompose
 import numpy as np
 import numpy.linalg as linalg
 
@@ -13,18 +12,18 @@ Floating point arithmetic not implemented
 
 class DiscreteGaussian:
 
-	def __init__(self, m:int, t:float, sigma:float, tao:float) -> None:
+	def __init__(self,center:float, sigma:float, tao:float) -> None:
 		'''
 		
 		'''
-		self.m 		= m		#sample Z_m: Rejection sampling for discrete gaussian on Z
-		self.t 		= t		    
+		# self.m 		= m		#sample Z_m: Rejection sampling for discrete gaussian on Z
+		self.t 		= center    
 		self.sigma 	= sigma
 		self.tao 	= tao
 
 	def _rejectionSampling(self)-> int:
-		if self.t > self.m or self.sigma > self.m or self.tao > self.m:
-			raise ValueError(f"Expected < {self.m}")
+		# if self.t > self.m or self.sigma > self.m or self.tao > self.m:
+		# 	raise ValueError(f"Expected < {self.m}")
 		h:float 	= - math.pi/(self.sigma**2)
 		x_max:int 	= math.ceil(self.t + self.tao * self.sigma)  
 		x_min:int 	= math.floor(self.t - self.tao * self.sigma)
@@ -45,8 +44,9 @@ class DiscreteGaussian:
 			 
 	
 #=======================================
-d = DiscreteGaussian(m = 10,t =  0, sigma=5, tao=1)
-l = d.sample(10)
+d = DiscreteGaussian(center =  0, sigma=5, tao=1)
+l = d.sample(1)[0]
+print(l)
 # print(l.count(range(10)))
 
 
