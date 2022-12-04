@@ -43,10 +43,10 @@ class DiscreteGaussian:
 		return vec
 			 
 	
-#=======================================
-d = DiscreteGaussian(center =  0, sigma=5, tao=1)
-l = d.sample(1)[0]
-print(l)
+# #=======================================
+# d = DiscreteGaussian(center =  0, sigma=5, tao=1)
+# # l = d.sample(1)[0]
+# # print(l)
 # print(l.count(range(10)))
 
 

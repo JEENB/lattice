@@ -1,5 +1,5 @@
 import numpy as np
-from src.utils import *
+from utils import *
 
 
 def decompose(dim, orth_basis, c):
@@ -28,7 +28,7 @@ def decompose(dim, orth_basis, c):
 
 	if isinstance(c, np.ndarray) and isinstance(orth_basis, np.ndarray):
 		if c.shape != (1, dim) or orth_basis.shape != (dim, dim):
-			raise ValueError("Vector shape Mismatch")
+			raise ValueError(f"Vector shape Mismatch {orth_basis}")
 	else:
 		raise TypeError("Expected numpy array")
 
@@ -38,4 +38,4 @@ def decompose(dim, orth_basis, c):
 
 	
 
-print(decompose(2, np.array([[0,1],[1,0]]),np.array([[1,2]])))
+# print(decompose(2, np.array([[0,1],[1,0]]),np.array([[1,2]])))
