@@ -14,11 +14,6 @@ class Lattice:
 		self.mu, self.orth_basis = grahm_schmidt(dim=self.dim, basis=self.basis)
 		self.ri = [np.linalg.norm(i) for i in self.orth_basis]
 
-	# def grahm_schmidt(self):
-	# 	self.orth_basis = None
-	# 	self.mu = None
-	# 	return self.orth_basis, self.mu
-
 
 class SampleLattice(Lattice):
 	def __init__(self, dim: int, basis, c, sigma:float, tao:float) -> None:
@@ -26,7 +21,6 @@ class SampleLattice(Lattice):
 		self.c = c
 		self.sigma = sigma
 		self.tao = tao
-		# self.orth_basis, self.mu = self.grahm_schmidt()
 		self.t = decompose(self.dim, self.orth_basis, self.c)
 
 	def sample(self):
@@ -35,7 +29,6 @@ class SampleLattice(Lattice):
 		
 		for i in range(self.dim - 1, -1, -1):
 			z[i] = DiscreteGaussian(sigma = self.sigma/self.ri[i], tao = self.tao, center = self.t[0][i]).sample(1)[0]  ## t is ndarray = [[t_1, t_2, ...]], #sample returns a list so first item
-			# print(self.basis[i])
 			v = v + z[i] * self.basis[i]
 			self.t = self.t - z[i]*self.mu[i]
 		return v
