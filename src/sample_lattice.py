@@ -3,6 +3,9 @@ from decompose import *
 from gaussian_sampling import *
 from grahm_schmidt import *
 
+
+
+## sample lattice points from discrete gaussian
 class Lattice:
 	def __init__(self, dim: int, basis) -> None:
 		self.dim = dim
