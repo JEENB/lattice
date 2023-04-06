@@ -1,7 +1,7 @@
 import numpy as np
 from exception import *
 from sampling import *
-
+from math import sqrt
 '''TODO: Custom parameter selection need a class to export parameter selection'''
 class Lattice:
 	def __init__(self, dim: int, basis) -> None:
@@ -88,7 +88,13 @@ class LWE:
 	def __init__(self, q: int, n: int, alpha:float, error_sampling: str = 'Gaussian', secret_sampling: str = 'Uniform'):
 		self.q = q
 		self.n = n
-		self.alpha = alpha
+		try:
+			self.alpha = alpha
+			assert alpha * q == sqrt(n)
+		except: 
+			self.alpha = sqrt(n) /q
+			print(f"New alpha is {self.alpha}")
+
 		self.secret = self.__generate_secret()
 		self.error_sampling = error_sampling
 		self.secret_sampling = secret_sampling
@@ -102,7 +108,7 @@ class LWE:
 		distribution: Gaussian/ Uniform
 			Default: Gaussian
 		'''
-		return uniform_sampling(0, self.q, self.n)
+		return discrete_gaussian_sampling(0, self.q * self.alpha, 3, self.n)
 
 
 	def an_instance(self):
@@ -117,9 +123,11 @@ class LWE:
 	def LWE_instances(self, m):
 		'''Generates m LWE instances'''
 		instances = []
+		self.m = m
 		for i in range(m):
 			a_i, b_i = self.an_instance()
 			instances.append((a_i, b_i))
+		# print("err",self.e)
 		return instances
 
 
@@ -127,14 +135,45 @@ class LWE:
 		'''Matrix version of the LWE instances A, B'''
 		A = np.zeros(shape = (self.n, m))
 		b = []
+		self.m = m
 		for i in range(m):
 			a_i, b_i = self.an_instance()
 			A[:,i] = np.array(a_i)
 			b.append(b_i)
 		return A, b
 
+	def exhaustive_search(self, instances, success_probability, summary: bool = False):
+		success_secret = []
 
-l = LWE(q = 100, n = 10, m = 2, alpha= 0.1)
-print(l.LWE_instances_matrix_version())
-print(l.secret)
-print(l.e)
+		t = math.log2(self.n)
+		interval = Interval(-t*self.alpha*self.q, t*self.alpha*self.q + 1 )
+		interval.print_interval()
+		all_secret = generate_all_possible_sequence(self.q, self.n)
+		for j, s in enumerate(all_secret):
+			counter = 0
+			for i in range(self.m):
+				a_i = instances[i][0]
+				b_i = instances[i][1]
+				e_i = np.dot(a_i, s) - b_i
+				e_i =  e_i % self.q
+					
+				if interval.check(e_i) == True:
+					counter += 1
+			if counter == self.m:
+				success_secret.append(s)
+
+		if summary == True:
+			pass
+
+		return success_secret
+
+l = LWE(q = 7, n = 3, alpha = 0.1)
+
+inst = l.LWE_instances(m = 24)
+print("secret", l.secret)
+all = l.exhaustive_search(inst, 0.95)
+print(len(all))
+
+
+
+		

@@ -69,9 +69,9 @@ class Uniform:
 		max 
 	'''
 
-	def __init__(self, a: int, b: int) -> None:
-		self.x_min = a
-		self.x_max = b
+	def __init__(self, low: int, high: int) -> None:
+		self.x_min = low
+		self.x_max = high
 
 	def sample(self, n:int):
 		'''
@@ -81,7 +81,7 @@ class Uniform:
 		'''
 		vec = []
 		for i in range(n):
-			vec.append(random.randint(self.x_min, self.x_max))
+			vec.append(np.random.randint(self.x_min, self.x_max))
 		return vec
 	
 
