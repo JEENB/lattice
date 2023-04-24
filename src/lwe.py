@@ -158,12 +158,19 @@ class LWE:
 
 		return guess_secret
 
+## test ----------------
+
+# setting up lwe parameters
 l = LweParameter(q = 13, n = 4, alpha = 0.1, error_sampling= discrete_gaussian_sampling, secret_sampling= discrete_gaussian_sampling)
 
+# instantiating the LWE class
 lwe = LWE(l)
-inst = lwe.LWE_instances(m = 19)
+
+# generating 40 lwe instances
+inst = lwe.LWE_instances(m = 40)
+# calling the exhaustive search method, returs all possible Secret values
 all_secret = lwe.exhaustive_search(param  = l, instances=inst, success_probability=0.95, summary=True)
-print(all_secret)
+print("Guess Secret Vectors: ", all_secret)
 
 
 

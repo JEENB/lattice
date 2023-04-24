@@ -1,8 +1,47 @@
 import numpy as np
 from decompose import *
-from gaussian_sampling import *
-from grahm_schmidt import *
+from sampling import *
+from gram_schmid import *
+from utils import *
 
+
+def decompose(dim, orth_basis, c):
+	'''
+	Decompose a vector c over the GS orth_basis
+	Parameters
+	-----------
+	n : int
+		lattice dimension
+	
+	c : numpy.array of dimension (1, n)
+		vector eg: np.array([[1,2,3]])
+	
+	B : numpy.array of dimension (1, n)
+		orth_basis vector of lattice
+		eg: np.array([	
+					[0,1,0]: b_1,
+					[1,0,0]: b_2
+					[0,0,1]: b_3
+					])
+	Compute
+	-------
+	y = c. B  #paper suggests B*t but since bi's are already row vectors transpose is not requuired
+	return (y_i/r_i^2)
+	'''
+
+	if isinstance(c, np.ndarray) and isinstance(orth_basis, np.ndarray):
+		if c.shape != (1, dim) or orth_basis.shape != (dim, dim):
+			raise ValueError(f"Vector shape Mismatch {orth_basis}")
+	else:
+		raise TypeError("Expected numpy array")
+
+	ri_square = np.array([[norm(i)**2 for i in orth_basis]])
+	y = np.matmul(c, orth_basis)
+	return np.true_divide(y,ri_square)
+
+	
+
+# print(decompose(2, np.array([[0,1],[1,0]]),np.array([[1,2]])))
 
 
 ## sample lattice points from discrete gaussian
@@ -14,7 +53,7 @@ class Lattice:
 			raise TypeError("Expected Numpy array")
 		elif self.basis.shape != (self.dim, self.dim):
 			raise ValueError("Basis Vectors do not match dimension")
-		self.mu, self.orth_basis = grahm_schmidt(dim=self.dim, basis=self.basis)
+		self.orth_basis, self.mu = gram_schmid(self.basis)
 		self.ri = [np.linalg.norm(i) for i in self.orth_basis]
 
 
@@ -27,19 +66,26 @@ class SampleLattice(Lattice):
 		self.t = decompose(self.dim, self.orth_basis, self.c)
 
 	def sample(self):
-		v = np.zeros(self.dim, dtype=float)
-		z = np.zeros(self.dim, dtype=float)
+		v = np.zeros(self.dim, dtype=np.longdouble)
+		z = np.zeros(self.dim, dtype=np.longdouble)
 		
 		for i in range(self.dim - 1, -1, -1):
 			z[i] = DiscreteGaussian(sigma = self.sigma/self.ri[i], tao = self.tao, center = self.t[0][i]).sample(1)[0]  ## t is ndarray = [[t_1, t_2, ...]], #sample returns a list so first item
 			v = v + z[i] * self.basis[i]
 			self.t = self.t - z[i]*self.mu[i]
 		return v
+	
+	def verify_point(self, point):
+		s = np.linalg.solve(self.basis, point)
+		ret = abs(s[1]).is_integer() and abs(s[2]).is_integer() and abs(s[0]).is_integer()
+		return ret
 
-s = SampleLattice(dim=3, basis = np.array([[0,1,2], [1,4,0], [3,0,4]], dtype=float), c= np.array([[1,1,1]],dtype=float), sigma=5, tao=1).sample()
-print(s)
 
+# s = SampleLattice(dim=3, basis = np.array([[-1,0,2], [3,1,-1], [1, 0, 1]], dtype=np.longdouble), c= np.array([[3,2,5]],dtype=np.longdouble), sigma=5, tao=3)
+# samples = s.sample()
+# print(s.verify_point(samples))
 
+	
 
 	
 		

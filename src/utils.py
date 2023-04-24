@@ -71,3 +71,53 @@ def generate_all_possible_sequence(q, L):
 	upper = int(q/2)
 	subset = itertools.product(range(lower, upper + 1),  repeat = L)
 	return subset
+
+
+
+def plot_lattice_2d(a,b,a_,b_, points_count = 10):
+    '''
+	Creates a plot of lattice, with good and bad basis together
+	'''
+    points_count= points_count
+    points=[a,b]
+    for x in range(-points_count//2+1,points_count//2+1):
+        for y in range(-points_count//2+1,points_count//2+1):
+            points.append(a*x+b*y)
+    points=np.array(points)
+    
+    points_=[a_,b_]
+    for x in range(-points_count//2+1,points_count//2+1):
+        for y in range(-points_count//2+1,points_count//2+1):
+            points_.append(a_*x+b_*y)
+    points_=np.array(points_)
+    
+    fig, ax = plt.subplots()
+    
+    ax.scatter(x=points[:,0],y=points[:,1],c="red")
+    ax.scatter(x=points_[:,0],y=points_[:,1],c="blue")
+    ax.scatter(x=[0],y=[0])
+    
+    ax.plot([0,a[0]],[0,a[1]],color="r",label ="original basis")
+    ax.plot([0,b[0]],[0,b[1]],color="r")
+    ax.plot([0,a_[0]],[0,a_[1]],color="b",label ="reduced basis")
+    ax.plot([0,b_[0]],[0,b_[1]],color="b")
+    
+    ax.minorticks_on()
+    ax.grid(which='minor',
+        color = 'black',
+        linewidth = 0.1)
+    ax.legend()
+    ax.grid()
+    plt.show() 
+
+def generate_lattice_points(dimension, q):
+	'''
+	q: parameter for finite field Z_q
+	dimension: lattice dimension
+	generates a (dimension * dimension) matrix with random entries from Z_q. The basis can be any
+	'''
+	det = 0
+	while det == 0:
+		M = np.random.randint(-q, q, size=(dimension, dimension))
+		det = np.linalg.det(M)
+	return M
