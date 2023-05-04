@@ -1,9 +1,6 @@
 import math
 import random
 import numpy as np
-import numpy.linalg as linalg
-import seaborn as sns
-import matplotlib.pyplot as plt
 from utils import *
 '''
 Discrete Gaussian sampling as per 
@@ -32,13 +29,14 @@ class DiscreteGaussian:
 		self.sigma 	= sigma
 		self.tao 	= tao
 
+
 	def _rejectionSampling(self)-> int:
 		'''
 		creates an instance of rejection sampling
 		'''
 		h:float 	= - math.pi/(self.sigma**2)
-		x_max:int 	= math.ceil(self.t + self.tao * self.sigma)  
-		x_min:int 	= math.floor(self.t - self.tao * self.sigma)
+		x_max		= math.ceil(self.t + self.tao * self.sigma)  
+		x_min		= math.floor(self.t - self.tao * self.sigma)
 		x:int		= random.randint(x_min, x_max)
 		p:float		= math.exp(h * (x - self.t)**2)  ##fpm
 		r:float		= random.random()  ##fpm
@@ -100,7 +98,8 @@ def uniform_sampling(a, b, sample_points):
 # but what if sigma and tao varied??		 
 	
 # #=======================================
-d = DiscreteGaussian(center =  0, sigma=5, tao=3)
+# d = DiscreteGaussian(center =  0, sigma=5, tao=3)
+# print(d.sample(12))
 
 # x = []
 # y = []

@@ -5,12 +5,12 @@ class DependentBasis(Exception):
 ## represent basis as row vectors
 def gram_schmid(basis: np.ndarray):
     
-    if type(basis) != float:
-        basis = basis.astype(float)
+    # if type(basis) != float:
+    #     basis = basis.astype(float)
         
     dim = basis.shape[1]
     b_star = np.zeros(basis.shape)
-    mu = np.zeros(basis.shape)
+    mu = np.identity(basis.shape[1])
     b_star[0, :] = basis[0, :]
     for i in range(1, dim):
         v = basis[i, :]
@@ -19,9 +19,9 @@ def gram_schmid(basis: np.ndarray):
             mu[i,j] = m
             v = v -  m * b_star[j,:]
         b_star[i,:] = v 
-    return b_star.astype('int'), mu
+    return b_star, mu
 
 if __name__ == '__main__':
-    basis = np.array([[1,1,1,], [-1,0,2], [3,5,6]])
+    basis = np.array([[3,4,5,], [6,7,8], [9,10,11]], dtype=np.longdouble)
     bas1 = gram_schmid(basis)
     print(bas1)

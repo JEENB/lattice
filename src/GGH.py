@@ -9,7 +9,7 @@ class GGH(Lattice):
 	def key_gen(self):
 		print("** Key Generation **")
 		self.sk = self.basis
-		self.pk = self.generate_bad_basis()
+		self.pk = self.generate_bad_basis(self.basis)
 		print("Hadamard Ratio sk: ", self.hadamard_ratio)
 		print("Hadamard Ratio pk: ", self.had_ratio(self.pk))
 		

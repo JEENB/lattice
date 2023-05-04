@@ -1,9 +1,16 @@
 import numpy as np
-from exception import *
 from sampling import *
-from math import sqrt
 from tabulate import tabulate
+from gram_schmid import gram_schmid
 '''TODO: Custom parameter selection need a class to export parameter selection'''
+
+class ShapeMismatch(Exception):
+	'''Exception when shape of the matrix mismatches.'''
+	pass
+
+class NotIndependentVectors(Exception):
+	'''Exception when dimension'''
+	pass
 
 def rand_unimod(n):
 	'''
@@ -41,13 +48,13 @@ class Lattice:
 		if self.basis.shape != (self.dim, self.dim):
 			raise ShapeMismatch(f"Expected ({self.dim, self.dim}) got {self.basis.shape}")
 
-		if np.linalg.matrix_rank(self.basis) != self.dim:
-			raise NotIndependentVectors("The given basis are not independent")
+		# if np.linalg.matrix_rank(self.basis) != self.dim:
+		# 	raise NotIndependentVectors("The given basis are not independent")
 		
 		self.hadamard_ratio = self.__hadamard_ratio()
 		# print("Hadamard Ratio = ", self.hadamard_ratio)
-		self.__grahm_schmidt()
-
+		self.orth_basis, self.mu = gram_schmid(self.basis)
+		
 	def __hadamard_ratio(self):
 		'''
 		Computes the hadamard_ratio
@@ -71,27 +78,16 @@ class Lattice:
 			vol *= np.linalg.norm(i)
 		return abs(det/vol) ** (1/dim)
 
-
-	def __grahm_schmidt(self):
+	@staticmethod
+	def generate_bad_basis(basis:np.ndarray):
 		'''
-		Performs the grahm-schmidt orthogonalization. 
+		generates a bad basis given a good basis using the unimod matrix
 		'''
-		self.orth_basis = self.basis.astype(float)
-		self.mu = np.identity(self.dim)
-		for i, vec in enumerate(self.orth_basis):
-			s = np.zeros(self.dim, dtype=float)
-			for j in range(i):
-				m = np.dot(vec, self.orth_basis[j])/np.linalg.norm(self.orth_basis[j])**2
-				self.mu[i,j] = m
-				s += m * self.orth_basis[j]
-			self.orth_basis[i] = np.subtract(self.orth_basis[i], s)
-	
-
-	def generate_bad_basis(self):
-		U = rand_unimod(self.dim)
-		bad_basis = np.matmul(U, self.basis)
+		U = rand_unimod(basis.shape[1])
+		bad_basis = np.matmul(U, basis)
 		return bad_basis
 	
+	@staticmethod
 	def babais_cvp(basis:np.ndarray,target_vector:np.ndarray, show_steps: bool = False):
 		log = []
 		a_is = []

@@ -1,9 +1,8 @@
 import numpy as np
-from decompose import *
 from sampling import *
 from gram_schmid import *
 from utils import *
-
+from lattice import *
 
 def decompose(dim, orth_basis, c):
 	'''
@@ -39,51 +38,47 @@ def decompose(dim, orth_basis, c):
 	y = np.matmul(c, orth_basis)
 	return np.true_divide(y,ri_square)
 
-	
-
-# print(decompose(2, np.array([[0,1],[1,0]]),np.array([[1,2]])))
-
-
-## sample lattice points from discrete gaussian
-class Lattice:
-	def __init__(self, dim: int, basis) -> None:
-		self.dim = dim
-		self.basis = basis
-		if not isinstance(self.basis, np.ndarray):
-			raise TypeError("Expected Numpy array")
-		elif self.basis.shape != (self.dim, self.dim):
-			raise ValueError("Basis Vectors do not match dimension")
-		self.orth_basis, self.mu = gram_schmid(self.basis)
-		self.ri = [np.linalg.norm(i) for i in self.orth_basis]
-
 
 class SampleLattice(Lattice):
 	def __init__(self, dim: int, basis, c, sigma:float, tao:float) -> None:
 		super().__init__(dim, basis)
+		self.ri = [np.linalg.norm(i) for i in self.orth_basis]
 		self.c = c
 		self.sigma = sigma
 		self.tao = tao
-		self.t = decompose(self.dim, self.orth_basis, self.c)
+
+		if np.linalg.matrix_rank(self.basis) != self.dim: 
+			raise NotIndependentVectors("The basis vectors are not linearly independent. Try different vector or use generate_lattice_points")
 
 	def sample(self):
 		v = np.zeros(self.dim, dtype=np.longdouble)
 		z = np.zeros(self.dim, dtype=np.longdouble)
+		t = decompose(self.dim, self.orth_basis, self.c)
 		
 		for i in range(self.dim - 1, -1, -1):
-			z[i] = DiscreteGaussian(sigma = self.sigma/self.ri[i], tao = self.tao, center = self.t[0][i]).sample(1)[0]  ## t is ndarray = [[t_1, t_2, ...]], #sample returns a list so first item
+			z[i] = DiscreteGaussian(sigma = self.sigma/self.ri[i], tao = self.tao, center = t[0][i]).sample(1)[0]  ## t is ndarray = [[t_1, t_2, ...]], #sample returns a list so first item
 			v = v + z[i] * self.basis[i]
-			self.t = self.t - z[i]*self.mu[i]
-		return v
+			t = t - z[i]*self.mu[:,i]
+		return v.astype('int')
 	
 	def verify_point(self, point):
 		s = np.linalg.solve(self.basis, point)
-		ret = abs(s[1]).is_integer() and abs(s[2]).is_integer() and abs(s[0]).is_integer()
-		return ret
+		for i in range(self.dim):
+			if abs(s[i]).is_integer() == False:
+				return False
+			else:
+				pass
+		return True
 
 
-# s = SampleLattice(dim=3, basis = np.array([[-1,0,2], [3,1,-1], [1, 0, 1]], dtype=np.longdouble), c= np.array([[3,2,5]],dtype=np.longdouble), sigma=5, tao=3)
-# samples = s.sample()
-# print(s.verify_point(samples))
+
+if __name__ == '__main__':
+
+	s = SampleLattice(dim=3, basis = np.array([[0,0,1], [0,1,0], [1,0,0]]), c= np.array([[1,5,9]]), sigma=5, tao=3)
+	print(s.hadamard_ratio)
+	samples = s.sample()
+	print(samples)
+	print(s.verify_point(samples))
 
 	
 
