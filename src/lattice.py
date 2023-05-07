@@ -2,7 +2,7 @@ import numpy as np
 from sampling import *
 from tabulate import tabulate
 from gram_schmid import gram_schmid
-'''TODO: Custom parameter selection need a class to export parameter selection'''
+
 
 class ShapeMismatch(Exception):
 	'''Exception when shape of the matrix mismatches.'''
@@ -110,22 +110,26 @@ class Lattice:
 		return v
 
 
-	
-# ## Babai's algorithm for good basis
-# good_basis = np.array([
-# 	[-97, 19, 19], 
-# 	[-18, 15, 43], 
-# 	[-92, -32, 39]
-# 	])
-# target_vector = [53172, 81743, 3152]
-# Lattice.babais_cvp(basis = good_basis, target_vector = target_vector, show_steps=True)
+if __name__ == '__main__':
 
-# ## Babai's algorithm for bad basis
-# bad_basis = np.array([
-# 	[-4179163, -1882253, 583183], 
-# 	[-3184353, -1434201, 444361], 
-# 	[-5277320, -2376852, 736426]
-# 	])
-# Lattice.babais_cvp(basis= bad_basis, target_vector = target_vector, show_steps=True)
+	basis = np.array([[0,0,1],[0,1,0],[1,0,0]])
+	print(Lattice.generate_bad_basis(basis))
+	
+	## Babai's algorithm for good basis
+	good_basis = np.array([
+		[-97, 19, 19], 
+		[-18, 15, 43], 
+		[-92, -32, 39]
+		])
+	target_vector = [53172, 81743, 3152]
+	print(Lattice.babais_cvp(basis = good_basis, target_vector = target_vector))
+
+	## Babai's algorithm for bad basis
+	bad_basis = np.array([
+		[-4179163, -1882253, 583183], 
+		[-3184353, -1434201, 444361], 
+		[-5277320, -2376852, 736426]
+		])
+	Lattice.babais_cvp(basis= bad_basis, target_vector = target_vector)
 
 		

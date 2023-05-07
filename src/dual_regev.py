@@ -8,7 +8,6 @@ class DualRegev:
 		self.r = r
 		self.m = m
 		self.n = n
-		print(self.r)
 
 		if r == None or m == None or alpha == None:
 			m = 2 * n * math.ceil(math.log(q, math.e)) + 1

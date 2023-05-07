@@ -59,6 +59,8 @@ if __name__ == '__main__':
 	v_0 ,v_1 =  b[0,:], b[1,:]
 
 	print("LLL Reduction")
+	v_0 = [12345, 1234]
+	v_1 = [5678, 1456]
 	lll = LLL2D(v_0, v_1)
 	_, __, v_0star, v_1star = lll.lll_dim2(steps=True)
 	print(v_0star, v_1star)
